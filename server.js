@@ -5,7 +5,9 @@ import { nanoid } from "nanoid";
 function isValidUrl(string) {
   try {
     const parsed = new URL(string);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    const validProtocol = parsed.protocol === "http:" || parsed.protocol === "https:";
+    const hasDomain = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(parsed.hostname);
+    return validProtocol && hasDomain;
   } catch {
     return false;
   }
@@ -36,7 +38,7 @@ app.post("/api/shorten", (req, res) => {
   if (!url || !isValidUrl(url)) {
     return res
       .status(400)
-      .json({ error: "A valid http or https URL is required" });
+      .json({ error: "Please enter a valid link, like https://example.com" });
   }
 
   const normalizedUrl = normalizeUrl(url);
